@@ -1,0 +1,40 @@
+{
+	"data": [
+		{
+			"id": "1",
+			"code": "1",
+			"name": "03/12/2020",
+			"description": "ABC1235",
+			"image": "bamboo-watch.jpg",
+			"price": 123.45,
+			"category": "1",
+			"quantity": 24,
+			"inventoryStatus": "The Quick Brown Fox Jumped over the lazy dog",
+			"rating": 5
+		},
+		{
+			"id": "2",
+			"code": "2",
+			"name": "04/12/2020",
+			"description": "AEN4917",
+			"image": "bamboo-watch.jpg",
+			"price": 100.00,
+			"category": "0",
+			"quantity": 24,
+			"inventoryStatus": "",
+			"rating": 5
+		},
+		{
+			"id": "3",
+			"code": "3",
+			"name": "15/12/2020",
+			"description": "ZZZ9876",
+			"image": "bamboo-watch.jpg",
+			"price": 98.76,
+			"category": "3",
+			"quantity": 24,
+			"inventoryStatus": "Waiting for confirmation details",
+			"rating": 5
+		}
+	]
+}

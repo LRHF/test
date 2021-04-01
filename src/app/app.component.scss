@@ -1,0 +1,28 @@
+:host ::ng-deep {
+
+    .p-paginator .p-paginator-current {
+        margin-left: auto !important;
+    }
+
+    .p-dialog .p-dialog-header,
+    .p-dialog .p-dialog-footer
+    {
+        padding: 0.7rem;
+    }
+
+    .p-dialog .p-dialog-content {
+        padding: 1rem;
+        border-top: 1px solid #c8c8c8;
+        border-bottom: 1px solid #c8c8c8;
+    }
+
+    .p-dialog .p-inputtext {
+        padding: 0.1rem 0.3rem;
+    }
+
+    #surveyDialog .p-dialog-content {
+        overflow-y: auto;
+        height: 80vh;
+    }
+}
+

@@ -1,0 +1,129 @@
+
+<p-card>
+  <p-toast position="top-center" ></p-toast>
+
+  <div class="card" >
+      <p-toolbar styleClass="p-mb-4">
+          <ng-template pTemplate="left">
+              <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+              <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger p-mr-2" (click)="deleteSelectedSurveys()" [disabled]="!selectedSurveys || !selectedSurveys.length"></button>
+          </ng-template>
+
+          <ng-template pTemplate="right">
+              <!-- <button pButton pRipple label="Export to Excel" icon="pi pi-upload" class="p-button-help"></button> -->
+          </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="surveys" [rows]="10" [paginator]="true" [globalFilterFields]="['survey.id','survey.date','survey.name']"
+          [(selection)]="selectedSurveys" [rowHover]="true" dataKey="id"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" styleClass="p-datatable-sm p-datatable-gridlines"
+          [resizableColumns]="true" [autoLayout]="true">
+          <ng-template pTemplate="caption">
+              <div class="p-d-flex p-ai-center p-jc-between">
+                  <h5 class="p-m-0">Manage Surveys</h5>
+                  <span class="p-input-icon-left">
+                      <i class="pi pi-search"></i>
+                      <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+                  </span>
+              </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+              <tr>
+                  <th style="width: 3%; text-align: center" >
+                      <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th>
+                  <th style="width: 10%" pSortableColumn="id">Survey ID<p-sortIcon field="id"></p-sortIcon></th>
+                  <th style="width: 20%" pSortableColumn="date">Creation Date<p-sortIcon field="date"></p-sortIcon></th>
+                  <th style="width: 55%" pSortableColumn="name">Survey Name<p-sortIcon field="name"></p-sortIcon></th>
+                  <th></th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-survey>
+              <tr>
+                  <td style="text-align: center">
+                      <p-tableCheckbox [value]="survey"></p-tableCheckbox>
+                  </td>
+                  <td>{{survey.id}}</td>
+                  <td>{{survey.date}}</td>
+                  <td>{{survey.name}}</td>
+                     <td>
+                      <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="editSurvey(survey)"></button>
+                      <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning p-mr-2" (click)="deleteSurvey(survey)"></button>
+                      <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-default" (click)="viewSurvey(survey)"></button>
+                  </td>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="summary">
+              <div class="p-d-flex p-ai-center p-jc-between">
+                  In total there are {{surveys ? surveys.length : 0 }} surveys
+              </div>
+          </ng-template>
+      </p-table>
+  </div>
+
+
+
+  <p-dialog id="surveyDialog" [(visible)]="surveyDialog" (onHide)="hideDialog()" [style]="{width: '750px'}" header="Survey Details" [modal]="true" styleClass="p-fluid"> 
+    <ng-template pTemplate="content" style="padding: 0 3rem;">
+
+        <table width="100%">
+            <tr >
+                <td width="15%">Survey Name</td>
+                <td>
+                    <span [hidden]="!viewMode">{{survey.name}}</span>
+                    <input [hidden]="viewMode" type="text" pInputText id="id" [(ngModel)]="survey.name" required autofocus autocomplete="off" />
+                    <small class="p-error" *ngIf="submitted && !survey.name">Name is required.</small>
+                </td>
+                <td [hidden]="viewMode" width="18%"><button pButton pRipple label="Add question" icon="pi pi-plus" class="p-button-success p-mr-2 p-button-sm" (click)="addQuestion()"></button></td>
+            </tr>
+        </table>
+
+        <div *ngFor="let question of survey.questions; let i = index" class="p-mt-3">
+            
+            <p-table [value]="question.answers" >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="padding: 0 0 0 0.5rem" width="15%">
+                            <label>Question {{i + 1}}</label> 
+                        </th>
+                        <th class="p-p-0"> 
+                            <span [hidden]="!viewMode">{{question.question}}</span> 
+                            <input [hidden]="viewMode" type="text" pInputText  [(ngModel)]="question.question" autocomplete="off"/>
+                        </th>
+                        <th [hidden]="viewMode" width="15%" style="padding: 0 0 0 1.3rem" ><button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteQuestion(question)"></button></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-answer let-j="rowIndex">
+                    
+                    <tr>
+                        <td style="padding: 0 0 0 1rem">
+                            <span [hidden]="!viewMode" style="padding: 0 0 0 3rem"> <input type="radio" name="{{i}}"></span> 
+                            <span [hidden]="viewMode">Answer {{stringRef.fromCharCode(97 + j) + ') '}}</span> 
+                        </td>
+                        <td class="p-p-0">
+                            <span [hidden]="!viewMode">{{answer.answer}}</span> 
+                            <input [hidden]="viewMode" type="text" pInputText  [(ngModel)]="answer.answer" autocomplete="off"/>
+                        </td>
+                        <td [hidden]="viewMode" width="15%" style="padding: 0 0 0 1.3rem" >
+                            <button pButton pRipple icon="pi pi-plus" class="p-button-success p-button-sm" (click)="addAnswer(question)"></button>
+                            <button pButton pRipple icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteAnswer(question, answer)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+      </ng-template>
+      
+      <ng-template pTemplate="footer">
+          <button pButton  label="Cancel" icon="pi pi-times" class="p-button-outlined" (click)="hideDialog()"></button>
+          <button pButton  label="Save" icon="pi pi-check" class="p-button-outlined" (click)="saveSurvey()"></button>
+      </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+</p-card>
+
+
+
